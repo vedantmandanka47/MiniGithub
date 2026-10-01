@@ -1,0 +1,40 @@
+<%-- SYLLABUS: JSP - JavaServer Pages Include Header Directive --%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Version Tree (VT) — Mini-GitHub</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/styles.css">
+</head>
+<body>
+    <header class="navbar">
+        <a href="${pageContext.request.contextPath}/" class="navbar-brand">
+            <span class="logo-icon">&#x2328;</span> Version Tree
+        </a>
+
+        <form action="${pageContext.request.contextPath}/search" method="get" class="navbar-search">
+            <input type="text" name="q" placeholder="Search repositories, developers, languages..." value="${param.q}">
+        </form>
+
+        <ul class="navbar-nav">
+            <c:choose>
+                <c:when test="${not empty sessionScope.currentUser}">
+                    <li><a href="${pageContext.request.contextPath}/dashboard">Dashboard</a></li>
+                    <li><a href="${pageContext.request.contextPath}/repository/new" class="btn btn-primary btn-sm">+ New Repo</a></li>
+                    <li><a href="${pageContext.request.contextPath}/profile">Profile (${sessionScope.currentUser.username})</a></li>
+                    <c:if test="${sessionScope.currentUser.role eq 'ADMIN'}">
+                        <li><a href="${pageContext.request.contextPath}/admin" style="color: var(--accent-purple);">Admin Panel</a></li>
+                    </c:if>
+                    <li><a href="${pageContext.request.contextPath}/logout" class="btn btn-secondary btn-sm">Logout</a></li>
+                </c:when>
+                <c:otherwise>
+                    <li><a href="${pageContext.request.contextPath}/login">Sign In</a></li>
+                    <li><a href="${pageContext.request.contextPath}/register" class="btn btn-primary btn-sm">Sign Up</a></li>
+                </c:otherwise>
+            </c:choose>
+        </ul>
+    </header>

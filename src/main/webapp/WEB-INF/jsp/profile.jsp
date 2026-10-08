@@ -19,6 +19,19 @@
                 <p style="margin-top: 10px; background-color: var(--bg-primary); padding: 10px; border-radius: 6px; border: 1px solid var(--border-color); font-size: 0.9rem;">
                     ${profileUser.bio}
                 </p>
+                <c:if test="${not empty currentUser and currentUser.id eq profileUser.id}">
+                    <form action="${pageContext.request.contextPath}/profile/update" method="post" style="margin-top: 16px;">
+                        <div class="form-group">
+                            <label for="skills">Skills and Languages</label>
+                            <input type="text" id="skills" name="skills" class="form-control" value="${profileUser.skills}" placeholder="Java, Spring, PostgreSQL">
+                        </div>
+                        <div class="form-group">
+                            <label for="bio">Bio</label>
+                            <textarea id="bio" name="bio" class="form-control" placeholder="Tell the community about your projects and interests...">${profileUser.bio}</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm">Save Profile</button>
+                    </form>
+                </c:if>
             </div>
         </div>
     </div>

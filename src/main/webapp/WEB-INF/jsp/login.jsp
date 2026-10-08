@@ -8,7 +8,16 @@
             <div class="alert alert-error">${error}</div>
         </c:if>
         <c:if test="${param.loggedOut eq 'true'}">
-            <div class="alert alert-success">You have been logged out successfully.</div>
+            <div id="logoutToast" role="status" style="position: fixed; top: 24px; right: 24px; z-index: 1000; max-width: 360px; padding: 14px 18px; color: #fff; background: var(--accent-green); border: 1px solid #2ea043; border-radius: 6px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);">
+                <span>You have been logged out successfully.</span>
+                <button type="button" aria-label="Close notification" onclick="document.getElementById('logoutToast').remove();" style="margin-left: 16px; border: 0; background: transparent; color: #fff; font-size: 1.1rem; cursor: pointer;">&times;</button>
+            </div>
+            <script>
+                window.setTimeout(function () {
+                    var toast = document.getElementById('logoutToast');
+                    if (toast) toast.remove();
+                }, 4000);
+            </script>
         </c:if>
 
         <form action="${pageContext.request.contextPath}/login" method="post">

@@ -16,10 +16,6 @@
             <span class="logo-icon">VT</span> Version Tree
         </a>
 
-        <form action="${pageContext.request.contextPath}/search" method="get" class="navbar-search">
-            <input type="text" name="q" placeholder="Search repositories, developers, languages..." value="${param.q}">
-        </form>
-
         <ul class="navbar-nav">
             <c:choose>
                 <c:when test="${not empty sessionScope.currentUser}">
@@ -29,7 +25,7 @@
                     <c:if test="${sessionScope.currentUser.role eq 'ADMIN'}">
                         <li><a href="${pageContext.request.contextPath}/admin" style="color: var(--accent-purple);">Admin Panel</a></li>
                     </c:if>
-                    <li><a href="${pageContext.request.contextPath}/logout" class="btn btn-secondary btn-sm">Logout</a></li>
+                    <li><a href="${pageContext.request.contextPath}/logout" class="btn btn-secondary btn-sm" onclick="return confirm('Are you sure you want to log out?');">Logout</a></li>
                 </c:when>
                 <c:otherwise>
                     <li><a href="${pageContext.request.contextPath}/login">Sign In</a></li>

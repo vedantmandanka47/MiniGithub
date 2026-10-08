@@ -102,46 +102,6 @@
         </c:if>
     </div>
 
-    <!-- Collaboration & Comments Section -->
-    <div class="card">
-        <div class="card-header">
-            <span>Project Discussion Thread (${comments.size()})</span>
-        </div>
-
-        <c:choose>
-            <c:when test="${not empty comments}">
-                <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
-                    <c:forEach var="c" items="${comments}">
-                        <div style="background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; padding: 12px;">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.85rem;">
-                                <strong><a href="${pageContext.request.contextPath}/profile?username=${c.user.username}" style="color: var(--accent-blue); text-decoration: none;">${c.user.username}</a></strong>
-                                <span style="color: var(--text-secondary);">${c.createdAt}</span>
-                            </div>
-                            <p style="font-size: 0.9rem;">${c.content}</p>
-                            <c:if test="${sessionScope.currentUser.role eq 'ADMIN'}">
-                                <form action="${pageContext.request.contextPath}/admin/comment/${c.id}/delete" method="post" style="margin-top: 6px;">
-                                    <input type="hidden" name="repoId" value="${repo.id}">
-                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Remove comment?');">Delete Comment</button>
-                                </form>
-                            </c:if>
-                        </div>
-                    </c:forEach>
-                </div>
-            </c:when>
-            <c:otherwise>
-                <p style="color: var(--text-secondary); margin-bottom: 16px;">No comments yet. Start the conversation below!</p>
-            </c:otherwise>
-        </c:choose>
-
-        <c:if test="${not empty sessionScope.currentUser}">
-            <form action="${pageContext.request.contextPath}/repository/${repo.id}/comment" method="post">
-                <div class="form-group">
-                    <textarea name="content" class="form-control" placeholder="Write a comment or discussion point..." required style="min-height: 80px;"></textarea>
-                </div>
-                <button type="submit" class="btn btn-secondary">Post Comment</button>
-            </form>
-        </c:if>
-    </div>
 </div>
 
 <%@ include file="footer.jspf" %>

@@ -25,13 +25,8 @@
             </div>
 
             <div class="form-group">
-                <label for="skills">Skills & Languages</label>
-                <input type="text" id="skills" name="skills" class="form-control" placeholder="e.g. Java, Spring, Hibernate, C++, MySQL">
-            </div>
-
-            <div class="form-group">
-                <label for="bio">Bio / Developer Profile</label>
-                <textarea id="bio" name="bio" class="form-control" placeholder="Tell the community about your projects and interests..."></textarea>
+                <label for="confirmPassword">Confirm Password *</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" required placeholder="Re-enter your password">
             </div>
 
             <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">Create Account</button>

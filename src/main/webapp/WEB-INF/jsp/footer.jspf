@@ -1,20 +1,5 @@
 <%-- SYLLABUS: JSP - Footer Include Directive --%>
     <footer class="footer">
-        <p>Copyright 2026 Version Tree (VT) - Academic Collaboration Platform (Course Code: 102045605)</p>
-        <p style="margin-top:6px;">
-            <span class="syllabus-tag">JDBC</span>
-            <span class="syllabus-tag">PreparedStatement</span>
-            <span class="syllabus-tag">ResultSet</span>
-            <span class="syllabus-tag">Servlet</span>
-            <span class="syllabus-tag">HttpSession</span>
-            <span class="syllabus-tag">Cookies</span>
-            <span class="syllabus-tag">JSP</span>
-            <span class="syllabus-tag">MVC</span>
-            <span class="syllabus-tag">Hibernate</span>
-            <span class="syllabus-tag">HQL</span>
-            <span class="syllabus-tag">Spring MVC</span>
-            <span class="syllabus-tag">Transactions</span>
-        </p>
     </footer>
 </body>
 </html>

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
@@ -61,5 +62,19 @@ public class SearchController {
         model.addAttribute("currentUser", currentUser);
 
         return "profile";
+    }
+
+    @PostMapping("/profile/update")
+    public String updateProfile(@RequestParam String bio,
+                                @RequestParam String skills,
+                                HttpSession session) {
+        User currentUser = (User) session.getAttribute("currentUser");
+        if (currentUser == null) {
+            return "redirect:/login";
+        }
+
+        User updatedUser = userService.updateUserProfile(currentUser.getId(), bio.trim(), skills.trim());
+        session.setAttribute("currentUser", updatedUser);
+        return "redirect:/profile";
     }
 }

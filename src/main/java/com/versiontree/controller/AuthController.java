@@ -75,12 +75,16 @@ public class AuthController {
     public String handleRegister(@RequestParam String username,
                                  @RequestParam String email,
                                  @RequestParam String password,
-                                 @RequestParam(required = false) String bio,
-                                 @RequestParam(required = false) String skills,
+                                 @RequestParam String confirmPassword,
                                  HttpSession session,
                                  Model model) {
         try {
-            User user = userService.registerUser(username, email, password, bio, skills);
+            if (!password.equals(confirmPassword)) {
+                model.addAttribute("error", "Password and confirm password must match.");
+                return "register";
+            }
+
+            User user = userService.registerUser(username, email, password, null, null);
             // SYLLABUS: HttpSession - Auto-login upon registration
             session.setAttribute("currentUser", user);
             return "redirect:/dashboard";

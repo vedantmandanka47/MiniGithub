@@ -81,11 +81,8 @@ public class RepositoryController {
         boolean isFollowingOwner = false;
 
         if (currentUser != null) {
-            isStarred = repositoryService.getRepositoryById(id).isPresent() && 
-                        repositoryService.getRepositoriesByOwner(currentUser.getId()).stream().anyMatch(r -> r.getId().equals(id));
-            isFollowingOwner = repositoryService.toggleFollow(currentUser.getId(), repo.getOwner().getId());
-            // Revert the check state toggle
-            repositoryService.toggleFollow(currentUser.getId(), repo.getOwner().getId());
+            isStarred = repositoryService.isStarred(currentUser.getId(), id);
+            isFollowingOwner = repositoryService.isFollowing(currentUser.getId(), repo.getOwner().getId());
         }
 
         model.addAttribute("repo", repo);

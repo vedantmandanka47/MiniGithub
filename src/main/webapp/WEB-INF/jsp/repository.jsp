@@ -81,27 +81,22 @@
             </c:otherwise>
         </c:choose>
 
-        <%-- SYLLABUS: Servlet - File Upload via FileUploadServlet (/servlet/upload-file) --%>
-        <c:if test="${not empty sessionScope.currentUser}">
+        <%-- SYLLABUS: Servlet - ZIP folder upload via FileUploadServlet (/servlet/upload-file) --%>
+        <c:if test="${not empty sessionScope.currentUser and sessionScope.currentUser.id eq repo.owner.id}">
             <div style="margin-top: 24px; border-top: 1px solid var(--border-color); padding-top: 16px;">
-                <h4>Upload or Update a File (Servlet Endpoint Demo)</h4>
-                <form action="${pageContext.request.contextPath}/servlet/upload-file" method="post" style="margin-top: 12px;">
+                <h4>Upload Project Folder</h4>
+                <form action="${pageContext.request.contextPath}/servlet/upload-file" method="post" enctype="multipart/form-data" style="margin-top: 12px;">
                     <input type="hidden" name="repoId" value="${repo.id}">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                        <div class="form-group">
-                            <label for="filename">Filename (e.g. Main.java, index.html)</label>
-                            <input type="text" id="filename" name="filename" class="form-control" required placeholder="Filename">
-                        </div>
-                        <div class="form-group">
-                            <label for="changeNote">Commit Note / Version Description</label>
-                            <input type="text" id="changeNote" name="changeNote" class="form-control" placeholder="e.g. Fixed null pointer bug in lexer">
-                        </div>
+                    <div class="form-group">
+                        <label for="archive">Project ZIP file</label>
+                        <input type="file" id="archive" name="archive" class="form-control" accept=".zip,application/zip" required>
+                        <small style="color: var(--text-secondary);">Upload a ZIP folder. Nested folders and source paths will be preserved in the repository.</small>
                     </div>
                     <div class="form-group">
-                        <label for="content">File Content / Source Code</label>
-                        <textarea id="content" name="content" class="form-control" style="min-height: 120px;" required placeholder="Paste or type file content..."></textarea>
+                        <label for="changeNote">Commit Note / Version Description</label>
+                        <input type="text" id="changeNote" name="changeNote" class="form-control" placeholder="e.g. Added lexer and parser sources">
                     </div>
-                    <button type="submit" class="btn btn-primary">Upload / Commit Version</button>
+                    <button type="submit" class="btn btn-primary">Upload ZIP / Commit Versions</button>
                 </form>
             </div>
         </c:if>

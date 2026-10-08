@@ -63,26 +63,8 @@
             </div>
         </div>
 
-        <!-- Sidebar: Popular Projects & Quick Info -->
+        <!-- Sidebar: Quick Info -->
         <div>
-            <div class="card">
-                <div class="card-header">
-                    <span>Popular Repositories</span>
-                </div>
-                <ul style="list-style: none;">
-                    <c:forEach var="pop" items="${popularRepos}">
-                        <li style="margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border-color);">
-                            <a href="${pageContext.request.contextPath}/repository/${pop.id}" style="font-weight: 600; color: var(--accent-blue); text-decoration: none; font-size: 0.95rem;">
-                                ${pop.owner.username} / ${pop.name}
-                            </a>
-                            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 2px;">
-                                <span>${pop.stars.size()} stars</span> - <span>${pop.language}</span>
-                            </div>
-                        </li>
-                    </c:forEach>
-                </ul>
-            </div>
-
             <div class="card">
                 <div class="card-header">
                     <span>Developer Profile</span>

@@ -10,6 +10,8 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.annotation.MultipartConfig;
+import javax.servlet.http.Part;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,6 +21,7 @@ import java.io.IOException;
 
 // SYLLABUS: Servlet - Mapping Servlet URL pattern for file upload endpoint
 @WebServlet(name = "FileUploadServlet", urlPatterns = "/servlet/upload-file")
+@MultipartConfig(maxFileSize = 50L * 1024 * 1024, maxRequestSize = 50L * 1024 * 1024)
 @Component
 public class FileUploadServlet extends HttpServlet {
 
@@ -46,17 +49,18 @@ public class FileUploadServlet extends HttpServlet {
 
         try {
             Long repoId = Long.parseLong(request.getParameter("repoId"));
-            String filename = request.getParameter("filename");
-            String content = request.getParameter("content");
+            Part archive = request.getPart("archive");
             String changeNote = request.getParameter("changeNote");
 
-            if (filename == null || filename.trim().isEmpty() || content == null) {
-                request.setAttribute("error", "Filename and content cannot be empty.");
+            if (archive == null || archive.getSize() == 0) {
+                request.setAttribute("error", "Choose a ZIP folder before uploading.");
                 request.getRequestDispatcher("/WEB-INF/jsp/repository.jsp").forward(request, response);
                 return;
             }
 
-            repositoryService.uploadOrUpdateFile(repoId, currentUser.getId(), filename.trim(), content, changeNote);
+            try (java.io.InputStream input = archive.getInputStream()) {
+                repositoryService.uploadZip(repoId, currentUser.getId(), input, changeNote);
+            }
             response.sendRedirect(request.getContextPath() + "/repository/" + repoId);
 
         } catch (Exception e) {

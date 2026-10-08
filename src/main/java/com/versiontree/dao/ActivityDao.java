@@ -42,4 +42,12 @@ public class ActivityDao {
         query.setMaxResults(limit);
         return query.getResultList();
     }
+
+    public List<Activity> findActivitiesByUser(Long userId, int limit) {
+        String hql = "FROM Activity a WHERE a.user.id = :userId ORDER BY a.createdAt DESC";
+        TypedQuery<Activity> query = entityManager.createQuery(hql, Activity.class);
+        query.setParameter("userId", userId);
+        query.setMaxResults(limit);
+        return query.getResultList();
+    }
 }

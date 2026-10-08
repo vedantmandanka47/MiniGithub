@@ -33,6 +33,11 @@ public class FileController {
     @GetMapping("/{fileId}")
     public String viewFileDetails(@PathVariable Long fileId, Model model, HttpSession session) {
         FileModel file = fileDao.findFileById(fileId).orElseThrow(() -> new IllegalArgumentException("File not found"));
+        User currentUser = (User) session.getAttribute("currentUser");
+        if (!canAccessRepository(file.getRepository(), currentUser)) {
+            return "redirect:/dashboard?error=Access+Denied";
+        }
+
         List<FileVersion> versions = fileDao.findVersionsByFile(fileId);
 
         String currentContent = "";
@@ -48,8 +53,6 @@ public class FileController {
                 }
             }
         }
-
-        User currentUser = (User) session.getAttribute("currentUser");
 
         model.addAttribute("file", file);
         model.addAttribute("versions", versions);
@@ -75,8 +78,13 @@ public class FileController {
 
     @GetMapping("/download/{versionId}")
     @ResponseBody
-    public ResponseEntity<Resource> downloadFileVersion(@PathVariable Long versionId) {
+    public ResponseEntity<Resource> downloadFileVersion(@PathVariable Long versionId, HttpSession session) {
         FileVersion version = fileDao.findVersionById(versionId).orElseThrow(() -> new IllegalArgumentException("Version not found"));
+        User currentUser = (User) session.getAttribute("currentUser");
+        if (!canAccessRepository(version.getFile().getRepository(), currentUser)) {
+            return ResponseEntity.status(403).build();
+        }
+
         File diskFile = new File(version.getContentPath());
         if (!diskFile.exists()) {
             return ResponseEntity.notFound().build();
@@ -88,5 +96,10 @@ public class FileController {
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .contentLength(diskFile.length())
                 .body(resource);
+    }
+
+    private boolean canAccessRepository(Repository repository, User currentUser) {
+        return !"PRIVATE".equalsIgnoreCase(repository.getVisibility())
+                || (currentUser != null && repository.getOwner().getId().equals(currentUser.getId()));
     }
 }

@@ -12,12 +12,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 @Service
 @Transactional
@@ -39,6 +45,8 @@ public class RepositoryService {
     private ActivityDao activityDao;
 
     private static final String STORAGE_DIR = "vt_storage/";
+    private static final long MAX_ARCHIVE_BYTES = 50L * 1024 * 1024;
+    private static final long MAX_FILE_BYTES = 10L * 1024 * 1024;
 
     public RepositoryService() {
         File dir = new File(STORAGE_DIR);
@@ -84,19 +92,34 @@ public class RepositoryService {
     // SYLLABUS: Transactions - Atomic multi-step operation: File upload + Version generation + Activity Log
     @Transactional
     public FileVersion uploadOrUpdateFile(Long repoId, Long userId, String filename, String content, String changeNote) throws IOException {
+        return uploadOrUpdateFileBytes(repoId, userId, filename, content.getBytes(StandardCharsets.UTF_8), changeNote);
+    }
+
+    @Transactional
+    public FileVersion uploadOrUpdateFileBytes(Long repoId, Long userId, String filename, byte[] content, String changeNote) throws IOException {
         Repository repo = repositoryDao.findById(repoId).orElseThrow(() -> new IllegalArgumentException("Repository not found"));
         User user = userDao.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        if (!repo.getOwner().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("Only the repository owner can upload files.");
+        }
+
+        if (filename == null || filename.trim().isEmpty() || content == null) {
+            throw new IllegalArgumentException("Uploaded file and filename are required.");
+        }
+
+        String normalizedFilename = normalizeArchivePath(filename);
 
         // Check if file already exists in repo
         List<FileModel> repoFiles = fileDao.findFilesByRepository(repoId);
         FileModel fileModel = repoFiles.stream()
-                .filter(f -> f.getFilename().equalsIgnoreCase(filename))
+                .filter(f -> f.getFilename().equalsIgnoreCase(normalizedFilename))
                 .findFirst()
                 .orElse(null);
 
         if (fileModel == null) {
-            String filetype = filename.contains(".") ? filename.substring(filename.lastIndexOf(".") + 1).toUpperCase() : "TXT";
-            fileModel = new FileModel(repo, filename, filetype);
+            String filetype = normalizedFilename.contains(".") ? normalizedFilename.substring(normalizedFilename.lastIndexOf(".") + 1).toUpperCase() : "TXT";
+            fileModel = new FileModel(repo, normalizedFilename, filetype);
             fileModel = fileDao.saveFile(fileModel);
         }
 
@@ -104,13 +127,13 @@ public class RepositoryService {
         List<FileVersion> existingVersions = fileDao.findVersionsByFile(fileModel.getId());
         int nextVersionNumber = existingVersions.size() + 1;
 
-        // Save file content to storage disk
-        String storagePath = STORAGE_DIR + "repo_" + repoId + "_file_" + fileModel.getId() + "_v" + nextVersionNumber + "_" + filename;
-        try (FileWriter writer = new FileWriter(storagePath)) {
-            writer.write(content);
-        }
+        // Keep user-controlled paths in the database, but use a generated storage filename on disk.
+        Path storageFile = Paths.get(STORAGE_DIR, "repo_" + repoId + "_file_" + fileModel.getId() + "_v" + nextVersionNumber + ".bin");
+        Files.createDirectories(storageFile.getParent());
+        Files.write(storageFile, content);
+        String storagePath = storageFile.toString();
 
-        long fileSize = new File(storagePath).length();
+        long fileSize = content.length;
         FileVersion version = new FileVersion(fileModel, nextVersionNumber, storagePath, fileSize, changeNote);
         version = fileDao.saveVersion(version);
 
@@ -119,10 +142,70 @@ public class RepositoryService {
         fileDao.saveFile(fileModel);
 
         // Record activity log
-        Activity activity = new Activity(user, "UPLOAD_FILE", repoId, "Uploaded version " + nextVersionNumber + " of " + filename);
+        Activity activity = new Activity(user, "UPLOAD_FILE", repoId, "Uploaded version " + nextVersionNumber + " of " + normalizedFilename);
         activityDao.save(activity);
 
         return version;
+    }
+
+    @Transactional
+    public int uploadZip(Long repoId, Long userId, InputStream archive, String changeNote) throws IOException {
+        List<ArchiveEntry> entries = new ArrayList<>();
+        long totalBytes = 0;
+
+        try (ZipInputStream zipInput = new ZipInputStream(archive)) {
+            ZipEntry entry;
+            byte[] buffer = new byte[8192];
+            while ((entry = zipInput.getNextEntry()) != null) {
+                if (entry.isDirectory()) {
+                    continue;
+                }
+
+                String filename = normalizeArchivePath(entry.getName());
+                ByteArrayOutputStream content = new ByteArrayOutputStream();
+                int bytesRead;
+                while ((bytesRead = zipInput.read(buffer)) != -1) {
+                    totalBytes += bytesRead;
+                    if (content.size() + bytesRead > MAX_FILE_BYTES || totalBytes > MAX_ARCHIVE_BYTES) {
+                        throw new IllegalArgumentException("The ZIP archive exceeds the 50 MB upload limit or contains a file larger than 10 MB.");
+                    }
+                    content.write(buffer, 0, bytesRead);
+                }
+                entries.add(new ArchiveEntry(filename, content.toByteArray()));
+            }
+        }
+
+        if (entries.isEmpty()) {
+            throw new IllegalArgumentException("The ZIP archive does not contain any files.");
+        }
+
+        for (ArchiveEntry entry : entries) {
+            uploadOrUpdateFileBytes(repoId, userId, entry.filename, entry.content, changeNote);
+        }
+        return entries.size();
+    }
+
+    private String normalizeArchivePath(String filename) {
+        String normalized = filename.replace('\\', '/');
+        Path path = Paths.get(normalized).normalize();
+        if (path.isAbsolute() || path.startsWith("..")) {
+            throw new IllegalArgumentException("The archive contains an unsafe file path.");
+        }
+        String safePath = path.toString().replace('\\', '/');
+        if (safePath.isEmpty() || safePath.equals(".")) {
+            throw new IllegalArgumentException("The archive contains an invalid file path.");
+        }
+        return safePath;
+    }
+
+    private static final class ArchiveEntry {
+        private final String filename;
+        private final byte[] content;
+
+        private ArchiveEntry(String filename, byte[] content) {
+            this.filename = filename;
+            this.content = content;
+        }
     }
 
     // SYLLABUS: Transactions - Restore older file version by creating a new version pointing to older content
@@ -156,6 +239,14 @@ public class RepositoryService {
             activityDao.save(new Activity(user, "STAR_REPO", repoId, "Starred repository " + repo.getName()));
             return true;
         }
+    }
+
+    public boolean isStarred(Long userId, Long repoId) {
+        return repositoryDao.isStarred(userId, repoId);
+    }
+
+    public boolean isFollowing(Long followerId, Long followeeId) {
+        return repositoryDao.isFollowing(followerId, followeeId);
     }
 
     // SYLLABUS: Transactions - Toggle Follow

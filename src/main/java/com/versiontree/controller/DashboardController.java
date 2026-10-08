@@ -45,16 +45,13 @@ public class DashboardController {
 
         // Fetch user repositories
         List<Repository> userRepos = repositoryService.getRepositoriesByOwner(currentUser.getId());
-        // Fetch popular repositories
-        List<Repository> popularRepos = repositoryService.getPopularRepositories(5);
         // Fetch activity feed of followed developers
         List<Activity> activityFeed = activityDao.findActivitiesByFollowedUsers(currentUser.getId(), 10);
         if (activityFeed.isEmpty()) {
-            activityFeed = activityDao.findRecentActivities(10);
+            activityFeed = activityDao.findActivitiesByUser(currentUser.getId(), 10);
         }
 
         model.addAttribute("userRepos", userRepos);
-        model.addAttribute("popularRepos", popularRepos);
         model.addAttribute("activityFeed", activityFeed);
         model.addAttribute("currentUser", currentUser);
 

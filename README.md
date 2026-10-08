@@ -42,16 +42,38 @@ spring.datasource.password=postgres
 
 ## Running the Application
 
-### Using Maven
+### First-time Maven setup on Windows
+
+If Maven is not already installed, download the binary ZIP from the Apache Maven website. The following example assumes the ZIP is saved at `C:\Users\student\Downloads\apache-maven-3.10.0-bin.zip`:
+
+```powershell
+Expand-Archive -Path "$env:USERPROFILE\Downloads\apache-maven-3.10.0-bin.zip" -DestinationPath "$env:USERPROFILE" -Force
+$env:MAVEN_HOME = "$env:USERPROFILE\apache-maven-3.10.0"
+$env:Path = "$env:MAVEN_HOME\bin;$env:Path"
+mvn -version
+```
+
+To make Maven available in new terminals, add `$env:MAVEN_HOME\bin` to the Windows user `Path`, or reopen a terminal after configuring it in System Properties.
+
+### Build and run with Maven
 
 From the project directory:
 
 ```powershell
+cd "E:\College Codes\Mini Project\MiniGithub"
 mvn clean package -DskipTests
 java -jar target\mini-github-1.0.0.jar
 ```
 
-The application starts on port `8082`.
+The application starts on port `8082`. Open http://localhost:8082/ after startup.
+
+If port `8082` is already in use, choose another port:
+
+```powershell
+java -jar target\mini-github-1.0.0.jar --server.port=8084
+```
+
+Then open http://localhost:8084/.
 
 ### Using the Existing JAR
 
@@ -61,10 +83,7 @@ If Maven is not installed, run the packaged artifact directly:
 java -jar target\mini-github-1.0.0.jar
 ```
 
-Open:
-
-- Application: http://localhost:8082/
-- Login: http://localhost:8082/login
+Open the application at http://localhost:8082/ or the login page at http://localhost:8082/login.
 
 The application uses `spring.jpa.hibernate.ddl-auto=validate`, so the PostgreSQL schema must exist before startup.
 
@@ -89,6 +108,15 @@ The seed includes:
 - Stars, follows, comments, and activity records
 
 Uploaded sample files are stored in `vt_storage/`.
+
+## Uploading a Project Folder
+
+Repository owners upload a project as a ZIP file from the repository page. The application preserves paths such as `src/main/java/App.java` and creates or updates each file version automatically.
+
+- ZIP upload limit: 50 MB
+- Individual file limit: 10 MB
+- Only the repository owner can upload files
+- Unsafe archive paths such as `../file.txt` are rejected
 
 ## Project Structure
 

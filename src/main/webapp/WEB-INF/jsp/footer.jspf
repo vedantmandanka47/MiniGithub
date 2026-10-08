@@ -1,6 +1,6 @@
 <%-- SYLLABUS: JSP - Footer Include Directive --%>
     <footer class="footer">
-        <p>&copy; 2026 Version Tree (VT) — Academic Collaboration Platform (Course Code: 102045605)</p>
+        <p>Copyright 2026 Version Tree (VT) - Academic Collaboration Platform (Course Code: 102045605)</p>
         <p style="margin-top:6px;">
             <span class="syllabus-tag">JDBC</span>
             <span class="syllabus-tag">PreparedStatement</span>

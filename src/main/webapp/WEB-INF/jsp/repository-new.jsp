@@ -34,8 +34,8 @@
             <div class="form-group">
                 <label for="visibility">Visibility</label>
                 <select id="visibility" name="visibility" class="form-control">
-                    <option value="PUBLIC" selected>Public — Anyone on Version Tree can view</option>
-                    <option value="PRIVATE">Private — Only you can view</option>
+                    <option value="PUBLIC" selected>Public - Anyone on Version Tree can view</option>
+                    <option value="PRIVATE">Private - Only you can view</option>
                 </select>
             </div>
 

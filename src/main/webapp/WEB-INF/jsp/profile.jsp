@@ -8,7 +8,7 @@
             </div>
             <div style="flex: 1;">
                 <h2>${profileUser.username}</h2>
-                <p style="color: var(--text-secondary); font-size: 0.9rem;">${profileUser.email} &bull; Member since ${profileUser.createdAt}</p>
+                <p style="color: var(--text-secondary); font-size: 0.9rem;">${profileUser.email} - Member since ${profileUser.createdAt}</p>
                 <div style="margin-top: 10px;">
                     <strong>Role:</strong> <span class="badge badge-public">${profileUser.role}</span>
                     <strong style="margin-left: 12px;">Status:</strong> <span class="badge ${profileUser.status eq 'ACTIVE' ? 'badge-public' : 'badge-private'}">${profileUser.status}</span>
@@ -43,7 +43,7 @@
                             <p style="font-size: 0.88rem; color: var(--text-secondary); margin-top: 4px;">${repo.description}</p>
                             <div style="display: flex; gap: 12px; margin-top: 6px; font-size: 0.8rem; color: var(--text-secondary);">
                                 <span class="badge badge-lang">${repo.language}</span>
-                                <span>★ ${repo.stars.size()} stars</span>
+                                <span>${repo.stars.size()} stars</span>
                             </div>
                         </li>
                     </c:forEach>

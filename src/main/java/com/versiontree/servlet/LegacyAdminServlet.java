@@ -45,7 +45,7 @@ public class LegacyAdminServlet extends HttpServlet {
             out.println("table{width:100%;border-collapse:collapse;margin-top:15px;} th,td{border:1px solid #30363d;padding:8px;text-align:left;}");
             out.println("th{background:#21262d;color:#58a6ff;} a{color:#58a6ff;text-decoration:none;}</style></head><body>");
             out.println("<h2>Legacy Raw JDBC Audit & Metrics Report</h2>");
-            out.println("<p><a href='" + request.getContextPath() + "/admin'>&larr; Back to Admin Panel</a></p>");
+            out.println("<p><a href='" + request.getContextPath() + "/admin'>Back to Admin Panel</a></p>");
             out.println("<h3>Summary Statistics (via PreparedStatement & ResultSet)</h3>");
             out.println("<ul>");
             out.println("<li><strong>Total Users:</strong> " + stats.getOrDefault("totalUsers", 0) + "</li>");

@@ -10,7 +10,7 @@
             <div>
                 <%-- SYLLABUS: Servlet - Direct link to Legacy raw JDBC servlet report --%>
                 <a href="${pageContext.request.contextPath}/servlet/legacy-admin-report" class="btn btn-secondary" target="_blank">
-                    &#x1F4CA; View Raw JDBC Servlet Report
+                    View Raw JDBC Servlet Report
                 </a>
             </div>
         </div>

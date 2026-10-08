@@ -12,7 +12,7 @@
                 <div style="margin-top: 8px; font-size: 0.85rem; color: var(--text-secondary); display: flex; gap: 16px;">
                     <span class="badge badge-lang">${repo.language}</span>
                     <span>Created ${repo.createdAt}</span>
-                    <span>★ ${repo.stars.size()} Stars</span>
+                    <span>${repo.stars.size()} Stars</span>
                 </div>
             </div>
 
@@ -20,7 +20,7 @@
                 <c:if test="${not empty sessionScope.currentUser}">
                     <form action="${pageContext.request.contextPath}/repository/${repo.id}/star" method="post" style="display: inline;">
                         <button type="submit" class="btn btn-secondary btn-sm">
-                            ★ ${isStarred ? 'Unstar' : 'Star'} (${repo.stars.size()})
+                            ${isStarred ? 'Unstar' : 'Star'} (${repo.stars.size()})
                         </button>
                     </form>
 

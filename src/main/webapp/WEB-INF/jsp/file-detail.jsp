@@ -2,7 +2,7 @@
 
 <div class="container">
     <div style="margin-bottom: 16px;">
-        <a href="${pageContext.request.contextPath}/repository/${file.repository.id}" style="color: var(--accent-blue); text-decoration: none;">&larr; Back to ${file.repository.name}</a>
+        <a href="${pageContext.request.contextPath}/repository/${file.repository.id}" style="color: var(--accent-blue); text-decoration: none;">Back to ${file.repository.name}</a>
     </div>
 
     <div class="card">
@@ -19,7 +19,7 @@
 
             <c:if test="${not empty currentVersion}">
                 <a href="${pageContext.request.contextPath}/file/download/${currentVersion.id}" class="btn btn-secondary btn-sm">
-                    &#x2193; Download Version #${currentVersion.versionNumber}
+                    Download Version #${currentVersion.versionNumber}
                 </a>
             </c:if>
         </div>

@@ -25,7 +25,7 @@
                                     <p style="font-size: 0.88rem; color: var(--text-secondary); margin-top: 4px;">${repo.description}</p>
                                     <div style="display: flex; gap: 12px; margin-top: 6px; font-size: 0.8rem; color: var(--text-secondary);">
                                         <span class="badge badge-lang">${repo.language}</span>
-                                        <span>★ ${repo.stars.size()} stars</span>
+                                        <span>${repo.stars.size()} stars</span>
                                     </div>
                                 </li>
                             </c:forEach>

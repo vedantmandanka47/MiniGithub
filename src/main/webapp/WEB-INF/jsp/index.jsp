@@ -7,7 +7,7 @@
             A student-friendly project collaboration & version management platform built for Advanced Java Programming. Track repository file history, share code, star projects, and follow developers.
         </p>
         <div style="display: flex; gap: 16px; justify-content: center;">
-            <a href="${pageContext.request.contextPath}/register" class="btn btn-primary" style="padding: 10px 24px; font-size: 1rem;">Get Started — Sign Up</a>
+            <a href="${pageContext.request.contextPath}/register" class="btn btn-primary" style="padding: 10px 24px; font-size: 1rem;">Get Started - Sign Up</a>
             <a href="${pageContext.request.contextPath}/login" class="btn btn-secondary" style="padding: 10px 24px; font-size: 1rem;">Sign In</a>
         </div>
     </div>

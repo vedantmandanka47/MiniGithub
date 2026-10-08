@@ -24,7 +24,7 @@
                                     <p style="font-size: 0.88rem; color: var(--text-secondary); margin-top: 4px;">${repo.description}</p>
                                     <div style="display: flex; gap: 12px; margin-top: 6px; font-size: 0.8rem; color: var(--text-secondary);">
                                         <span class="badge badge-lang">${repo.language}</span>
-                                        <span>★ ${repo.stars.size()} stars</span>
+                                        <span>${repo.stars.size()} stars</span>
                                     </div>
                                 </li>
                             </c:forEach>
@@ -45,7 +45,7 @@
                     <c:when test="${not empty activityFeed}">
                         <c:forEach var="act" items="${activityFeed}">
                             <div class="activity-item">
-                                <span class="activity-icon">&#x2605;</span>
+                                <span class="activity-icon">Activity</span>
                                 <div>
                                     <p style="font-size: 0.9rem;">
                                         <strong><a href="${pageContext.request.contextPath}/profile?username=${act.user.username}" style="color: var(--text-primary); text-decoration: none;">${act.user.username}</a></strong>
@@ -76,7 +76,7 @@
                                 ${pop.owner.username} / ${pop.name}
                             </a>
                             <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 2px;">
-                                <span>★ ${pop.stars.size()} stars</span> &bull; <span>${pop.language}</span>
+                                <span>${pop.stars.size()} stars</span> - <span>${pop.language}</span>
                             </div>
                         </li>
                     </c:forEach>
